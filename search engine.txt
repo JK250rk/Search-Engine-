@@ -1,0 +1,81 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+
+public class GUISearchEngine extends JFrame {
+    private JTextField searchField;
+    private JTextArea resultArea;
+
+    // Predefined documents
+    private final Map<Integer, String> documents = new HashMap<>();
+
+    public GUISearchEngine() {
+        // Initialize the documents
+        documents.put(1, "Java is a versatile programming language.");
+        documents.put(2, "Search engines use algorithms to fetch results.");
+        documents.put(3, "Programming in Java is fun.");
+        documents.put(4, "Engines power many modern machines.");
+
+        // Set up the frame
+        setTitle("Simple Search Engine");
+        setSize(500, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Create UI components
+        JLabel titleLabel = new JLabel("Simple Search Engine", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+
+        JLabel searchLabel = new JLabel("Enter keyword:");
+        searchField = new JTextField(20);
+
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(new SearchActionListener());
+
+        resultArea = new JTextArea();
+        resultArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(resultArea);
+
+        // Arrange components in a layout
+        JPanel inputPanel = new JPanel();
+        inputPanel.add(searchLabel);
+        inputPanel.add(searchField);
+        inputPanel.add(searchButton);
+
+        setLayout(new BorderLayout());
+        add(titleLabel, BorderLayout.NORTH);
+        add(inputPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
+    }
+
+    // Search action
+    private class SearchActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String keyword = searchField.getText().toLowerCase();
+            resultArea.setText(""); // Clear previous results
+
+            boolean found = false;
+            for (Map.Entry<Integer, String> entry : documents.entrySet()) {
+                if (entry.getValue().toLowerCase().contains(keyword)) {
+                    resultArea.append("Document " + entry.getKey() + ": " + entry.getValue() + "\n");
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                resultArea.setText("No documents found containing the keyword: " + keyword);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            GUISearchEngine searchEngine = new GUISearchEngine();
+            searchEngine.setVisible(true);
+        });
+    }
+}
